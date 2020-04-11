@@ -379,6 +379,8 @@ RCT_REMAP_METHOD(refresh,
     [dateFormat setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]];
     [dateFormat setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss'Z'"];
 
+    return  @{@"code": authResponse.authorizationCode};
+           
     return @{@"accessToken": response.accessToken ? response.accessToken : @"",
              @"accessTokenExpirationDate": response.accessTokenExpirationDate ? [dateFormat stringFromDate:response.accessTokenExpirationDate] : @"",
              @"authorizeAdditionalParameters": authResponse.additionalParameters,
