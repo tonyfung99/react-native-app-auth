@@ -392,40 +392,12 @@ public class RNAppAuthModule extends ReactContextBaseJavaModule implements Activ
             }
 
             final Promise authorizePromise = this.promise;
-            final AppAuthConfiguration configuration = createAppAuthConfiguration(
-                    createConnectionBuilder(this.dangerouslyAllowInsecureHttpRequests, this.tokenRequestHeaders)
-            );
 
-            AuthorizationService authService = new AuthorizationService(this.reactContext, configuration);
-
-            TokenRequest tokenRequest = response.createTokenExchangeRequest(this.additionalParametersMap);
-
-            AuthorizationService.TokenResponseCallback tokenResponseCallback = new AuthorizationService.TokenResponseCallback() {
-
-                @Override
-                public void onTokenRequestCompleted(
-                        TokenResponse resp, AuthorizationException ex) {
-                    if (resp != null) {
-                        WritableMap map = TokenResponseFactory.tokenResponseToMap(resp, response);
-                        if (authorizePromise != null) {
-                            authorizePromise.resolve(map);
-                        }
-                    } else {
-                        if (promise != null) {
-                            promise.reject("token_exchange_failed", getErrorMessage(ex));
-                        }
-                    }
-                }
-            };
-
-            if (this.clientSecret != null) {
-                ClientAuthentication clientAuth = this.getClientAuthentication(this.clientSecret, this.clientAuthMethod);
-                authService.performTokenRequest(tokenRequest, clientAuth, tokenResponseCallback);
-
-            } else {
-                authService.performTokenRequest(tokenRequest, tokenResponseCallback);
+            WritableMap map = Arguments.createMap();
+            map.putString("code", response.authorizationCode);
+            if (authorizePromise != null) {
+                authorizePromise.resolve(map);
             }
-
         }
     }
 
